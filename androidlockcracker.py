@@ -49,7 +49,7 @@ class PasswordGestureGenerate(object):
         return self.generate_hash(self.generate_gesture_string(self.gesture))
 
     def generate_hash(self, gesture_string):
-        return hashlib.sha1(gesture_string).hexdigest().upper()
+        return hashlib.sha1(gesture_string.encode("utf8")).hexdigest().upper()
 
 
 class PasswordPinGenerate(object):
