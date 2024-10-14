@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 AndroidLockCracker - Cracking and generating Android lock hashes
-Copyright (C) 2022   George Nicolaou (george({at})silensec({dot})com) and Dovine Owuor
+Copyright (c) 2022   George Nicolaou (george({at})silensec({dot})com) and Dovine Owuor
+Copyright (c) 2024   David Martínez (ansiblesec({at})gmail({dot})com)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -56,7 +57,7 @@ class PasswordPinGenerate(object):
         self.passwd = passwd
         self.salt = salt
         if self.passwd != None and self.salt != None:
-            self.salted = self.passwd + self.salt
+            self.salted = (self.passwd + self.salt).encode("utf8")
         else:
             self.salted = None
         return
@@ -70,21 +71,21 @@ class PasswordPinGenerate(object):
 
     def generate_self_hash_sha1(self):
         if self.salted == None:
-            self.salted = self.passwd + self.salt
+            self.salted = (self.passwd + self.salt).encode("utf8")
         return hashlib.sha1(self.salted).hexdigest()
 
     def generate_hash_sha1(self, passwd):
-        salted = passwd + self.salt
+        salted = (passwd + self.salt).encode("utf8")
         return hashlib.sha1(salted).hexdigest()
 
     def generate_self_hash(self):
-        salted = self.passwd + self.salt
+        salted = (self.passwd + self.salt).encode("utf8")
         return (
             hashlib.sha1(salted).hexdigest() + hashlib.md5(salted).hexdigest()
         ).upper()
 
     def generate_hash(self, passwd):
-        salted = passwd + self.salt
+        salted = (passwd + self.salt).encode("utf8")
         return (
             hashlib.sha1(salted).hexdigest() + hashlib.md5(salted).hexdigest()
         ).upper()
@@ -143,7 +144,7 @@ class PasswordPinCracker(object):
         generator = PasswordPinGenerate()
         generator.set_salt(self.salt)
         charlist = self._gen_charlist()
-        for length in xrange(self.plengthbegin, self.plengthend + 1):
+        for length in range(self.plengthbegin, self.plengthend + 1):
             for passwd in product(charlist, repeat=length):
                 passwd = "".join(passwd)
                 phash = generator.generate_hash(passwd)
@@ -167,7 +168,7 @@ class PasswordGestureCracker(object):
     def begin_brute_crack(self):
         generator = PasswordGestureGenerate(self.sizeX, self.sizeY)
         gridpoints = self._gen_points()
-        for length in xrange(self.lengthbegin, self.lengthend + 1):
+        for length in range(self.lengthbegin, self.lengthend + 1):
             # XXX Replace product() with something that doesn't generate
             # repetitions (eg 1,1,...)
             for passwd in product(gridpoints, repeat=length):
@@ -350,7 +351,7 @@ def main():
         if opt in ("-h", "--help"):
             usage()
         elif opt in ("-s", "--salt"):
-            options.salt = struct.pack(">q", long(arg)).encode("hex")
+            options.salt = struct.pack(">q", int(arg)).hex()
             options.strsalt = arg
         elif opt in ("-l", "--length"):
             options.passwd_length = int(arg)
@@ -379,7 +380,7 @@ def main():
 
     options.passwd = args[2]
     if len(args) == 4:
-        options.salt = struct.pack(">q", long(args[3])).encode("hex")
+        options.salt = struct.pack(">q", int(args[3])).hex()
         options.strsalt = args[3]
     if args[0] in ("crack", "CRACK"):
         handle_crack(options)

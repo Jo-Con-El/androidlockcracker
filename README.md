@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Nyuki Android Lock Cracker (androidlockcracker) is a python script capable of 
+Nyuki Android Lock Cracker (androidlockcracker) is a Python 3 script capable of 
 cracking and generating the default Android lock hashes for PIN, Password and 
 Gesture screen locks. It offers a number of options when cracking a hash, such 
 as password length, character restrictions, wordlist and gridsize. It can be 
@@ -15,7 +15,6 @@ available.
 * Bruteforce and wordlist cracking
 * Specify password length or length range
 * Specify alpha, numeric, symbols or combinations for cracking (default: numeric)
-
 
 ## Running
 ```
